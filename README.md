@@ -1,1 +1,1 @@
-# Teoria-kompilacji
+# Teoria-kompilacji-i-kompilatory
