@@ -1,3 +1,3 @@
 # Teoria-kompilacji-i-kompilatory
 
-- [] Założenia
+- [x] Założenia
