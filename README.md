@@ -1,3 +1,20 @@
-# Teoria-kompilacji-i-kompilatory
+# Teoria kompilacji i kompilatory
+## Interpreter pythona w pythonie
 
-- [ ] Założenia
+Interpreter pythona często rozumiany jest jako:
+  - REPL (Read-Evaluate-Print-Loop) - czyli interaktywne środowisko programowania, wiersz poleceń powłoki
+  - wykonawca programów napisanych w pythonie od początku do końca 
+  
+W tym projekcie interpreter pythona będzie odpowiedzialny za ostatni etap w procesie wykonywania programów w pythonie. Na wejściu będzie otrzymywał kod źródłowy, przekształcony wcześniej prze lekser, parser i kompilator do struktury obiektów (*code obiects*) zawierających instrukcje (*bytecode*) możliwe do zrozumienia przez interpreter. Rolą interpretera będzie wykonanie tych instrukcji.
+
+Zalety:
+ - łatwość implementacji 
+ - łatwość zrozumienia, dzięki użyciu języka wysokiego poziomu 
+
+Wady:
+- szybkość (oryginalny interpreter napisany w C jest bardzo dobrze zoptymalizowany)
+
+Założenia:
+- interpreter jest maszyną stosową (*stack machine*) - wykonuje operacje manipulując stosami (w przeciwieństwie do maszyny rejestrowej)
+- interpreter dostaje na wejściu *bytecode*, który jest zbiorem instrukcji zawierającym się w obiektach (*code obiects*) wygenerowanych we wcześniejszym kroku przez kompilator
+- interpreter jest odpowiedzialny za wykonanie instrukcji, które dostał
