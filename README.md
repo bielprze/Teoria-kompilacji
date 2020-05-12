@@ -18,3 +18,9 @@ Założenia:
 - interpreter jest maszyną stosową (*stack machine*) - wykonuje operacje manipulując stosami (w przeciwieństwie do maszyny rejestrowej)
 - interpreter dostaje na wejściu *bytecode*, który jest zbiorem instrukcji zawierającym się w obiektach (*code obiects*) wygenerowanych we wcześniejszym kroku przez kompilator
 - interpreter jest odpowiedzialny za wykonanie instrukcji, które dostał
+
+## Implementacja cz.1
+W pierwszej części implementacji stworzyliśmy szkielet systemu składający się z 3 klas:
+  - Virtual Machine - odpowiedzialna za zarządzanie działaniem całego interpretera
+  - Frame - zarządzająca pojedynczą ramką danych
+  - Function
