@@ -229,7 +229,6 @@ class VirtualMachine(object): #główny obiekt interpretera
         'MODULO':   operator.mod,
         'ADD':      operator.add,
         'SUBTRACT': operator.sub,
-        'SUBSCR':   operator.getitem,
         'AND':      operator.and_,
         'OR':       operator.or_,
         }
