@@ -24,3 +24,6 @@ W pierwszej części implementacji stworzyliśmy szkielet systemu składający s
   - Virtual Machine - odpowiedzialna za zarządzanie działaniem całego interpretera. Zostały w niej zaimplementowane metody do obsługi stosu ramek oraz stosu danych. 
   - Frame - zarządzająca pojedynczą ramką danych
   - Function - sterowanie ramkami tworzonymi przez wywołanie funkcji
+  
+## Implementacja cz.2
+W drugiej części przygotowany wcześniej szkielet programu został wypełniony. Dodatkowo zostały zaimplementowane podstawowe instrukcje (dodawanie, odejmowanie, mnożenie, dzielenie, pobieranie zmiennych, stałych itp.). W aktualnej wersji interpreter jest w stanie przyjąć wcześniej skompilowany kod i przeprowadzić na nim swoje operacje. 
