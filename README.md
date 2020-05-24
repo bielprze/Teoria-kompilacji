@@ -23,4 +23,4 @@ Założenia:
 W pierwszej części implementacji stworzyliśmy szkielet systemu składający się z 3 klas:
   - Virtual Machine - odpowiedzialna za zarządzanie działaniem całego interpretera
   - Frame - zarządzająca pojedynczą ramką danych
-  - Function
+  - Function - sterowanie ramkami tworzonymi przez wywołanie funkcji
