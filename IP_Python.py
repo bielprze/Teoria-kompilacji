@@ -198,10 +198,8 @@ class VirtualMachine(object): #główny obiekt interpretera
             val = frame.f_locals[name]
         elif name in frame.f_globals:
             val = frame.f_globals[name]
-        elif name in frame.f_builtins:
-            val = frame.f_builtins[name]
         else:
-            raise NameError("name '%s' is not defined" % name)
+            val = frame.f_builtins[name]
         self.push(val)
 
     def byte_STORE_NAME(self, name):
@@ -210,10 +208,7 @@ class VirtualMachine(object): #główny obiekt interpretera
     def byte_LOAD_FAST(self, name):
         if name in self.frame.f_locals:
             val = self.frame.f_locals[name]
-        else:
-            raise UnboundLocalError(
-                "local variable '%s' referenced before assignment" % name
-            )
+        
         self.push(val)
 
     def byte_STORE_FAST(self, name):
@@ -223,10 +218,8 @@ class VirtualMachine(object): #główny obiekt interpretera
         f = self.frame
         if name in f.f_globals:
             val = f.f_globals[name]
-        elif name in f.f_builtins:
-            val = f.f_builtins[name]
         else:
-            raise NameError("global name '%s' is not defined" % name)
+            val = f.f_builtins[name]
         self.push(val)
         
     BINARY_OPERATORS = {
