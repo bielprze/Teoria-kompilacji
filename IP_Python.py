@@ -237,7 +237,29 @@ class VirtualMachine(object): #główny obiekt interpretera
         x, y = self.popn(2)
         self.push(self.BINARY_OPERATORS[op](x, y))
 
+    def byte_MAKE_FUNCTION(self, argc):
+        name = self.pop()
+        code = self.pop()
+        defaults = self.popn(argc)
+        globs = self.frame.f_globals
+        fn = Function(name, code, globs, defaults, None, self)
+        self.push(fn)
+
+    def byte_CALL_FUNCTION(self, arg):
+        lenKw, lenPos = divmod(arg, 256) # KWargs not supported here
+        posargs = self.popn(lenPos)
+
+        func = self.pop()
+        frame = self.frame
+        retval = func(*posargs)
+        self.push(retval)
+
     def byte_RETURN_VALUE(self):
         self.return_value = self.pop()
+        if self.frame.generator:
+            self.frame.generator.finished = True
         return "return"
     
+    def PRINT_ANSWER(self):
+        answer = self.stack.pop()
+        print(answer)
