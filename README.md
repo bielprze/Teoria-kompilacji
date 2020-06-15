@@ -24,7 +24,29 @@ Jak działa interpreter Pythona:
 
 Wejście interpretera, czyli *code object* składa się z dwóch części:
 - listy instrukcji (*bytecode*)
-- listy stałych używanych przez konkretne instrukcje (jeśli takowe są potrzebne)
+- listy stałych (argumentów funkcji) używanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne)
+
+## Zasada działania interpretera 
+Obiekt interpretera zawiera stos, reprezentowany przez listę, oraz metody opisujące jak wykonać poszczególne instrukcje, operując na tym stosie. Na przykład dodanie dwóch liczb sprowadza się do trzech instrukcji:
+1. wprowadzenie zmiennych - umieszczenie liczb na stosie
+2. dodanie dwóch zmiennych - ściągnięcie dwóch zmiennych ze stosu, dodanie ich i umieszczenie wyniku z powrotem na stosie
+3. wypisanie wyniku - ściągnięcie zmiennej ze stosu i wypisanie jej
+
+Wejście interpretera jest reprezentowane przez słownik postaci:
+```
+program_do_wykonania = {
+  "instrukcje": [("nazwa_instrukcji", 0), # pierwszy argument
+                 ("nazwa2_instrukcji, None), # instrukcja bezargumentowa
+                 ...],
+  "argumenty": [arg1, arg2, ...] # dla każdego typu danych osobna lista
+}
+```
+Wykonanie programu odbywa się przez wywołanie po kolei w pętli wszystkich instrukcji, wraz z odpowiednimi argumentami 
+
+## Implementacja
+Struktura *prawdziwego bytecodu* w zasadzie nie różni sie od przedstawionej, z dokładnością do używania jednego bajta pamięci zamiast długich nazw opisowych. Python udostępnia wiele swoich elementów podczas działania programu takich jak:
+ - func_name.\__code__ - *code object* powiązany z funkcją
+ - func_name.\__code__.co_code - *bytecode*
 
 ## Implementacja cz.1
 W pierwszej części implementacji stworzyliśmy szkielet systemu składający się z 3 klas:
