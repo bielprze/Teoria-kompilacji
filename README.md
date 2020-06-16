@@ -26,7 +26,7 @@ Wady:
 
 Wejście interpretera, czyli *code object* składa się z dwóch części:
 - listy instrukcji (*bytecode*), złożonej z par (nazwa_instrukcji,arg_index) 
-- listy stałych (argumentów funkcji) wywoływanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne)
+- listy stałych (argumentów funkcji) wywoływanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne).
 Można je przedstawić przy pomocy słownika:
 ```
 program_do_wykonania = {
@@ -40,18 +40,27 @@ Wykonanie programu, w uproszczeniu, odbywa się przez wywołanie po kolei wszyst
 
 ## Implementacja
 
+#### Funkcje
 Każda instrukcja w wejściowym bytecodzie musi mieć zapewnioną implementację odpowiedniej funkcji operującej na stosie.
 Na przykład dodanie dwóch liczb sprowadza się do trzech instrukcji:
 1. wprowadzenie stałych - umieszczenie liczb na stosie
 2. dodanie dwóch stałych - ściągnięcie dwóch liczb ze stosu, dodanie ich i umieszczenie wyniku z powrotem na stosie
 3. wypisanie wyniku - ściągnięcie ze stosu i wypisanie liczby
 
+#### Zmienne
 W szczególności, do wprowadzenia zmiennych, w obiekcie wejściowym potrzebna jest dodatkowa lista zmiennych i funkcja uzupełniająca słownik wiążący nazwy zmiennych z ich wartościami. Interpreter wie z której listy w danym momencie ma skorzystać na podsatwie rodzaju wykonywanej instrukcji. Do mapowania instrukcji na odpowiedni argument służy funkcja parsująca, która każdą instrukcję kwalifikuje do odpowiedniej listy argumentów.
 
-Struktura *prawdziwego bytecodu* w zasadzie nie różni sie od przedstawionej, z dokładnością do używania jednego bajta pamięci zamiast długich nazw opisowych. Python udostępnia wiele swoich elementów podczas działania programu takich jak:
- - func_name.\__code__ - *code object* powiązany z funkcją
- - func_name.\__code__.co_code - *bytecode*
+#### Wyrażenia warunkowe i pętle
+Do ewaluowania wyrażeń warunkowych i wykonywania pętli potrzebne są instrukcje skoków (warunkowych i bezwarunkowych) oraz operatory porównywania posiadające swoje implementacje funkcji operujących na stosie. Instrukcje skoków jako argument przyjmują indeks instrukcji do której ma ''skoczyć'' interpreter, tzw. *jump target*.
+TODO fill
 
+Struktura *prawdziwego bytecodu* w zasadzie nie różni sie od przedstawionej, z dokładnością do używania jednego bajta pamięci zamiast długich nazw opisowych. Python udostępnia wiele swoich elementów podczas działania programu takich jak:
+ - func_name.\_\_code__ - *code object* powiązany z funkcją
+ - func_name.\_\_code__.co_code - *bytecode*
+ - getattr(self, instruction) - w celu dynamicznego sprawdzania nazw kolejnych metod żeby uniknąć potwornego ifa 
+ - dis.dis(func_name) - przedstawia kod maszynowy (tu *bytecod*) w formie czytelnej dla ludzi
+TODO
+możliwości kompilacji - compile i obj.__code__
 ## Implementacja cz.1
 W pierwszej części implementacji stworzyliśmy szkielet systemu składający się z 3 klas:
   - Virtual Machine - odpowiedzialna za zarządzanie działaniem całego interpretera. Zostały w niej zaimplementowane metody do obsługi stosu ramek oraz stosu danych. 
