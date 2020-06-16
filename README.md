@@ -17,22 +17,17 @@ Zalety:
 Wady:
 - szybkość (oryginalny interpreter napisany w C jest bardzo dobrze zoptymalizowany)
 
-Jak działa interpreter Pythona:
+## Zasada działania interpretera 
+
 - interpreter jest maszyną wirtualną (*virtual machine*), reprezentowaną przez maszynę stosową (*stack machine*) - wykonuje operacje manipulując stosami, dzięki czemu w łatwy sposób można śledzić jego stan (w przeciwieństwie do maszyny rejestrowej (*register machine*), która pisze i czyta z konkretnych miejsc w pamięci)
-- interpreter dostaje na wejściu *bytecode*, który jest zbiorem instrukcji (i dodatkowych niezbędnych informacji) zawierającym się w obiektach (*code objects*), wygenerowanych we wcześniejszym kroku przez kompilator. *Bytecode* jest pośrednią reprezentacją kodu w Pythonie - reprezentuje napisany kod źródłowy w sposób możliwy do zrozumienia przez interpreter.
+- obiekt interpretera zawiera stos, reprezentowany przez listę, oraz metody opisujące jak wykonać poszczególne instrukcje, operując na tym stosie.
 - interpreter jest odpowiedzialny za wykonanie instrukcji, które dostał na wejściu
+- interpreter dostaje na wejściu *code objec*, który jest zbiorem instrukcji (i dodatkowych niezbędnych informacji) zawierającym się w obiektach (*code objects*), wygenerowanych we wcześniejszym kroku przez kompilator. *Bytecode* jest pośrednią reprezentacją kodu w Pythonie - reprezentuje napisany kod źródłowy w sposób możliwy do zrozumienia przez interpreter.
 
 Wejście interpretera, czyli *code object* składa się z dwóch części:
-- listy instrukcji (*bytecode*)
-- listy stałych (argumentów funkcji) używanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne)
-
-## Zasada działania interpretera 
-Obiekt interpretera zawiera stos, reprezentowany przez listę, oraz metody opisujące jak wykonać poszczególne instrukcje, operując na tym stosie. Na przykład dodanie dwóch liczb sprowadza się do trzech instrukcji:
-1. wprowadzenie zmiennych - umieszczenie liczb na stosie
-2. dodanie dwóch zmiennych - ściągnięcie dwóch zmiennych ze stosu, dodanie ich i umieszczenie wyniku z powrotem na stosie
-3. wypisanie wyniku - ściągnięcie zmiennej ze stosu i wypisanie jej
-
-Wejście interpretera jest reprezentowane przez słownik postaci:
+- listy instrukcji (*bytecode*), złożonej z par (nazwa_instrukcji,arg_index) 
+- listy stałych (argumentów funkcji) wywoływanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne)
+Można je przedstawić przy pomocy słownika:
 ```
 program_do_wykonania = {
   "instrukcje": [("nazwa_instrukcji", 0), # pierwszy argument
@@ -41,9 +36,18 @@ program_do_wykonania = {
   "argumenty": [arg1, arg2, ...] # dla każdego typu danych osobna lista
 }
 ```
-Wykonanie programu odbywa się przez wywołanie po kolei w pętli wszystkich instrukcji, wraz z odpowiednimi argumentami 
+Wykonanie programu, w uproszczeniu, odbywa się przez wywołanie po kolei wszystkich instrukcji, wraz z odpowiednimi argumentami.
 
 ## Implementacja
+
+Każda instrukcja w wejściowym bytecodzie musi mieć zapewnioną implementację odpowiedniej funkcji operującej na stosie.
+Na przykład dodanie dwóch liczb sprowadza się do trzech instrukcji:
+1. wprowadzenie stałych - umieszczenie liczb na stosie
+2. dodanie dwóch stałych - ściągnięcie dwóch liczb ze stosu, dodanie ich i umieszczenie wyniku z powrotem na stosie
+3. wypisanie wyniku - ściągnięcie ze stosu i wypisanie liczby
+
+W szczególności, do wprowadzenia zmiennych, w obiekcie wejściowym potrzebna jest dodatkowa lista zmiennych i funkcja uzupełniająca słownik wiążący nazwy zmiennych z ich wartościami. Interpreter wie z której listy w danym momencie ma skorzystać na podsatwie rodzaju wykonywanej instrukcji. Do mapowania instrukcji na odpowiedni argument służy funkcja parsująca, która każdą instrukcję kwalifikuje do odpowiedniej listy argumentów.
+
 Struktura *prawdziwego bytecodu* w zasadzie nie różni sie od przedstawionej, z dokładnością do używania jednego bajta pamięci zamiast długich nazw opisowych. Python udostępnia wiele swoich elementów podczas działania programu takich jak:
  - func_name.\__code__ - *code object* powiązany z funkcją
  - func_name.\__code__.co_code - *bytecode*
