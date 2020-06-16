@@ -4,7 +4,8 @@ import types
 import inspect
 import sys
 
-class Frame(object): #pojedyncza ramka danych
+ #pojedyncza ramka danych
+class Frame(object):
     def __init__(self, code_obj, global_names, local_names, prev_frame):
         self.code_obj = code_obj
         self.global_names = global_names
@@ -21,7 +22,8 @@ class Frame(object): #pojedyncza ramka danych
         self.last_instruction = 0
         self.block_stack = []
         
-class Function(object): #sterowanie ramkami tworzonymi przez wywołanie funkcji
+#sterowanie ramkami tworzonymi przez wywołanie funkcji    
+class Function(object): 
     
     __slots__ = [
         'func_code', 'func_name', 'func_defaults', 'func_globals',
@@ -60,7 +62,8 @@ def make_cell(value):
     return fn.__closure__[0]
 
 
-class VirtualMachine(object): #główny obiekt interpretera
+#główny obiekt interpretera
+class VirtualMachine(object): 
     def __init__(self):
         self.frames = []   # stos z ramkami
         self.frame = None  # aktualna
@@ -132,8 +135,8 @@ class VirtualMachine(object): #główny obiekt interpretera
         else:
             return []
     
-        
-    def parse(self): #konwersja argumentów 
+    #konwersja argumentów 
+    def parse(self): 
         f = self.frame
         opoffset = f.last_instruction
         byteCode = f.code_obj.co_code[opoffset]
@@ -160,7 +163,8 @@ class VirtualMachine(object): #główny obiekt interpretera
 
         return byte_name, argument
     
-    def dispatch(self, byte_name, argument): #operacja dla danej instrukcji
+    #operacja dla danej instrukcji
+    def dispatch(self, byte_name, argument): 
         why = None
         
         try:
@@ -194,32 +198,32 @@ class VirtualMachine(object): #główny obiekt interpretera
 
     def byte_LOAD_NAME(self, name):
         frame = self.frame
-        if name in frame.f_locals:
-            val = frame.f_locals[name]
-        elif name in frame.f_globals:
-            val = frame.f_globals[name]
+        if name in frame.local_names:
+            val = frame.local_names[name]
+        elif name in frame.global_names:
+            val = frame.global_names[name]
         else:
-            val = frame.f_builtins[name]
+            val = frame.builtin_names[name]
         self.push(val)
 
     def byte_STORE_NAME(self, name):
-        self.frame.f_locals[name] = self.pop()
+        self.frame.local_names[name] = self.pop()
 
     def byte_LOAD_FAST(self, name):
-        if name in self.frame.f_locals:
-            val = self.frame.f_locals[name]
+        if name in self.frame.local_names:
+            val = self.frame.local_names[name]
         
         self.push(val)
 
     def byte_STORE_FAST(self, name):
-        self.frame.f_locals[name] = self.pop()
+        self.frame.local_names[name] = self.pop()
 
     def byte_LOAD_GLOBAL(self, name):
         f = self.frame
-        if name in f.f_globals:
-            val = f.f_globals[name]
+        if name in f.global_names:
+            val = f.global_names[name]
         else:
-            val = f.f_builtins[name]
+            val = f.builtin_names[name]
         self.push(val)
         
     BINARY_OPERATORS = {
@@ -241,7 +245,7 @@ class VirtualMachine(object): #główny obiekt interpretera
         name = self.pop()
         code = self.pop()
         defaults = self.popn(argc)
-        globs = self.frame.f_globals
+        globs = self.frame.global_names
         fn = Function(name, code, globs, defaults, None, self)
         self.push(fn)
 
@@ -263,3 +267,13 @@ class VirtualMachine(object): #główny obiekt interpretera
     def PRINT_ANSWER(self):
         answer = self.stack.pop()
         print(answer)
+        
+def foo():
+    print("abcd")
+    
+vm = VirtualMachine()
+#vm.run(foo.__code__)
+#code = compile(b'print(5+5)',b'sum55','exec')
+code = compile(b'print(5+5)',b'sum55','exec')
+vm.run(code)
+#exec(code)
