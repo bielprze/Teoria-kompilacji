@@ -268,12 +268,56 @@ class VirtualMachine(object):
         answer = self.stack.pop()
         print(answer)
         
-def foo():
-    print("abcd")
-    
-vm = VirtualMachine()
-#vm.run(foo.__code__)
-#code = compile(b'print(5+5)',b'sum55','exec')
-code = compile(b'print(5+5)',b'sum55','exec')
-vm.run(code)
-#exec(code)
+
+    def byte_JUMP_FORWARD(self, jump):
+        self.jump(jump)
+
+    def byte_JUMP_ABSOLUTE(self, jump):
+        self.jump(jump)
+
+    def byte_POP_JUMP_IF_TRUE(self, jump):
+        val = self.pop()
+        if val:
+            self.jump(jump)
+
+    def byte_POP_JUMP_IF_FALSE(self, jump):
+        val = self.pop()
+        if not val:
+            self.jump(jump)
+            
+            
+    COMPARE_OPERATORS = [
+        operator.lt,
+        operator.le,
+        operator.eq,
+        operator.ne,
+        operator.gt,
+        operator.ge,
+    ]
+
+    def byte_COMPARE_OP(self, opnum):
+        x, y = self.popn(2)
+        self.push(self.COMPARE_OPERATORS[opnum](x, y))
+        
+    def byte_SETUP_LOOP(self, dest):
+        self.push_block('loop', dest)
+
+    def byte_GET_ITER(self):
+        self.push(iter(self.pop()))
+
+    def byte_FOR_ITER(self, jump):
+        iterobj = self.top()
+        try:
+            v = next(iterobj)
+            self.push(v)
+        except StopIteration:
+            self.pop()
+            self.jump(jump)
+
+    def byte_BREAK_LOOP(self):
+        return 'break'
+
+    def byte_POP_BLOCK(self):
+        self.pop_block()
+
+
