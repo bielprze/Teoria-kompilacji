@@ -134,7 +134,9 @@ class VirtualMachine(object):
             return ret
         else:
             return []
-    
+    def jump(self, jump):
+        self.frame.last_instruction = jump
+      
     #konwersja argumentów 
     def parse(self): 
         f = self.frame
