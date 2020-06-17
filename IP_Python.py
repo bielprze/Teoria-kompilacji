@@ -8,7 +8,7 @@ import sys
 class Frame(object):
     def __init__(self, code_obj, global_names, local_names, prev_frame):
         self.code_obj = code_obj
-        self.global_names = global_names
+        self.global_names = global_names #zmienne?
         self.local_names = local_names
         self.prev_frame = prev_frame
         self.stack = []
@@ -134,6 +134,9 @@ class VirtualMachine(object):
             return ret
         else:
             return []
+            
+    def jump(self, jump):
+        self.frame.last_instruction = jump
     
     #konwersja argumentów 
     def parse(self): 
@@ -276,4 +279,5 @@ vm = VirtualMachine()
 #code = compile(b'print(5+5)',b'sum55','exec')
 code = compile(b'print(5+5)',b'sum55','exec')
 vm.run(code)
+vm.run(foo.__code__)
 #exec(code)
