@@ -3,12 +3,15 @@ import operator
 import types
 import inspect
 import sys
+import collections as c
 
- #pojedyncza ramka danych
+Block = c.namedtuple("Block", "type, handler, stack_height")
+
+#pojedyncza ramka danych
 class Frame(object):
     def __init__(self, code_obj, global_names, local_names, prev_frame):
         self.code_obj = code_obj
-        self.global_names = global_names #zmienne?
+        self.global_names = global_names
         self.local_names = local_names
         self.prev_frame = prev_frame
         self.stack = []
@@ -68,6 +71,10 @@ class VirtualMachine(object):
         self.frames = []   # stos z ramkami
         self.frame = None  # aktualna
         self.return_value = None
+        
+    def run(self, code, global_names=None, local_names=None):
+        frame = self.make_frame(code, global_names=global_names, local_names=local_names)
+        self.run_fr(frame)
 
         
     #obsługa stosu ramek    
@@ -137,7 +144,7 @@ class VirtualMachine(object):
             
     def jump(self, jump):
         self.frame.last_instruction = jump
-    
+      
     #konwersja argumentów 
     def parse(self): 
         f = self.frame
@@ -183,13 +190,67 @@ class VirtualMachine(object):
             self.last_exception = sys.exc_info()[:2] + (None,)
             why = 'exception'
 
-        return why
-    
-    
-    def run(self, code, global_names=None, local_names=None):
-        frame = self.make_frame(code, global_names=global_names, local_names=local_names)
-        self.run_fr(frame)
+        return why  
         
+    # manipulacje block stackiem
+    def push_block(self, b_type, handler=None):
+        stack_height = len(self.frame.stack)
+        self.frame.block_stack.append(Block(b_type, handler, stack_height))
+
+    def pop_block(self):
+        return self.frame.block_stack.pop()
+
+    def unwind_block(self, block):
+        if block.type == 'except-handler':
+            # The exception itself is on the stack as type, value, and traceback.
+            offset = 3  
+        else:
+            offset = 0
+
+        while len(self.frame.stack) > block.level + offset:
+            self.pop()
+
+        if block.type == 'except-handler':
+            traceback, value, exctype = self.popn(3)
+            self.last_exception = exctype, value, traceback
+
+    def manage_block_stack(self, why):
+        """ """
+        frame = self.frame
+        block = frame.block_stack[-1]
+        if block.type == 'loop' and why == 'continue':
+            self.jump(self.return_value)
+            why = None
+            return why
+
+        self.pop_block()
+        self.unwind_block(block)
+
+        if block.type == 'loop' and why == 'break':
+            why = None
+            self.jump(block.handler)
+            return why
+
+        if (block.type in ['setup-except', 'finally'] and why == 'exception'):
+            self.push_block('except-handler')
+            exctype, value, tb = self.last_exception
+            self.push(tb, value, exctype)
+            self.push(tb, value, exctype) # yes, twice
+            why = None
+            self.jump(block.handler)
+            return why
+
+        elif block.type == 'finally':
+            if why in ('return', 'continue'):
+                self.push(self.return_value)
+
+            self.push(why)
+
+            why = None
+            self.jump(block.handler)
+            return why
+        return why
+   
 
 
     #instrukcje
@@ -271,13 +332,56 @@ class VirtualMachine(object):
         answer = self.stack.pop()
         print(answer)
         
-def foo():
-    print("abcd")
-    
-vm = VirtualMachine()
-#vm.run(foo.__code__)
-#code = compile(b'print(5+5)',b'sum55','exec')
-code = compile(b'print(5+5)',b'sum55','exec')
-vm.run(code)
-vm.run(foo.__code__)
-#exec(code)
+
+    def byte_JUMP_FORWARD(self, jump):
+        self.jump(jump)
+
+    def byte_JUMP_ABSOLUTE(self, jump):
+        self.jump(jump)
+
+    def byte_POP_JUMP_IF_TRUE(self, jump):
+        val = self.pop()
+        if val:
+            self.jump(jump)
+
+    def byte_POP_JUMP_IF_FALSE(self, jump):
+        val = self.pop()
+        if not val:
+            self.jump(jump)
+            
+            
+    COMPARE_OPERATORS = [
+        operator.lt,
+        operator.le,
+        operator.eq,
+        operator.ne,
+        operator.gt,
+        operator.ge,
+    ]
+
+    def byte_COMPARE_OP(self, opnum):
+        x, y = self.popn(2)
+        self.push(self.COMPARE_OPERATORS[opnum](x, y))
+        
+    def byte_SETUP_LOOP(self, dest):
+        self.push_block('loop', dest)
+
+    def byte_GET_ITER(self):
+        self.push(iter(self.pop()))
+
+    def byte_FOR_ITER(self, jump):
+        iterobj = self.top()
+        try:
+            v = next(iterobj)
+            self.push(v)
+        except StopIteration:
+            self.pop()
+            self.jump(jump)
+
+    def byte_BREAK_LOOP(self):
+        return 'break'
+
+    def byte_POP_BLOCK(self):
+        self.pop_block()
+
+
