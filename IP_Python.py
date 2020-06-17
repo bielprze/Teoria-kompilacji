@@ -141,7 +141,7 @@ class VirtualMachine(object):
             return ret
         else:
             return []
-            
+
     def jump(self, jump):
         self.frame.last_instruction = jump
       
@@ -215,7 +215,6 @@ class VirtualMachine(object):
             self.last_exception = exctype, value, traceback
 
     def manage_block_stack(self, why):
-        """ """
         frame = self.frame
         block = frame.block_stack[-1]
         if block.type == 'loop' and why == 'continue':
