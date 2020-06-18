@@ -22,11 +22,11 @@ Wady:
 - interpreter jest maszyną wirtualną (*virtual machine*), reprezentowaną przez maszynę stosową (*stack machine*) - wykonuje operacje manipulując stosami, dzięki czemu w łatwy sposób można śledzić jego stan (w przeciwieństwie do maszyny rejestrowej (*register machine*), która pisze i czyta z konkretnych miejsc w pamięci)
 - obiekt interpretera zawiera stos, reprezentowany przez listę, oraz metody opisujące jak wykonać poszczególne instrukcje, operując na tym stosie.
 - interpreter jest odpowiedzialny za wykonanie instrukcji, które dostał na wejściu
-- interpreter dostaje na wejściu *code objec*, który jest zbiorem instrukcji (i dodatkowych niezbędnych informacji) zawierającym się w obiektach (*code objects*), wygenerowanych we wcześniejszym kroku przez kompilator. *Bytecode* jest pośrednią reprezentacją kodu w Pythonie - reprezentuje napisany kod źródłowy w sposób możliwy do zrozumienia przez interpreter.
+- interpreter dostaje na wejściu *code objec*, który jest zbiorem instrukcji i odpowiadających im argumentów, wygenerowanm we wcześniejszym kroku przez kompilator. *Bytecode* jest pośrednią reprezentacją kodu w Pythonie - reprezentuje napisany kod źródłowy w sposób możliwy do zrozumienia przez interpreter.
 
 Wejście interpretera, czyli *code object* składa się z dwóch części:
 - listy instrukcji (*bytecode*), złożonej z par (nazwa_instrukcji,arg_index) 
-- listy stałych (argumentów funkcji) wywoływanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne).
+- list stałych (argumentów funkcji, nazw zmiennych, ...) wywoływanych przez konkretne instrukcje (jeśli takowe argumenty są potrzebne).
 Można je przedstawić przy pomocy słownika:
 ```
 program_do_wykonania = {
