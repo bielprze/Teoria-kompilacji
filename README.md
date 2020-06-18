@@ -3,11 +3,12 @@
 
 
 
-Interpreter pythona często rozumiany jest jako:
+Interpreter pythona można rozuemić jako:
   - REPL (Read-Evaluate-Print-Loop) - czyli interaktywne środowisko programowania, wiersz poleceń powłoki
-  - wykonawca programów napisanych w pythonie od początku do końca 
+  - program wykonujący od parsowania przez kompilację po interpretację programy napisane w Pythonie
+  - wirtualna maszyna służąca do wykonywania kodu
   
-Python jest dynamicznie typowanym językiem interpretowanym, ale tak jak większość języków interpretowanych zawiera krok kompilacji. Krok ten jednak wykonuje znacząco mniej pracy i zawiera relatywnie mniej informacji o programie niż w przypadku języków kompilowanych takich jak C.
+Python jest dynamicznie typowanym językiem interpretowanym, ale tak jak większość języków interpretowanych zawiera krok kompilacji w procesie wykonywania programów. Krok ten jednak wykonuje znacznie mniej pracy i zawiera relatywnie mniej informacji o programie niż w przypadku języków kompilowanych takich jak C.
 W tym projekcie interpreter pythona będzie odpowiedzialny za ostatni etap w procesie wykonywania programów w pythonie. Na wejściu będzie otrzymywał kod źródłowy, przekształcony wcześniej przez lekser, parser i kompilator do struktury obiektów (*code objects*) zawierających instrukcje (*bytecode*) możliwe do zrozumienia przez interpreter. Rolą interpretera będzie wykonanie tych instrukcji.
 
 Zalety:
