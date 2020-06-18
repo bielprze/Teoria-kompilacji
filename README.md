@@ -82,4 +82,8 @@ Struktura *prawdziwego bytecodu* w zasadzie nie różni sie od przedstawionej, z
  - func_name.\_\_code__.co_code - *bytecode*
  - getattr(self, instruction) - w celu dynamicznego sprawdzania nazw kolejnych metod żeby uniknąć potwornego ifa 
  - dis.dis(func_name) - przedstawia kod maszynowy (tu *bytecod*) w formie czytelnej dla ludzi
+ 
+ 
+#### Implementacja cz.3
+W trzeciej części implementacji dodaliśmy obsługę kolejnych instrukcji, tak że w finalnym projekcie mamy dostep do podstawowcyh operacji matematycznych (mnożenie, dzielenie, modulo, dodawanie, odejmowanie), operatorów logicznych (OR i AND), operatorów porównania (większe od, większe bądź równe, równe, nierówne, mniejsze, mniejsze bądź równe), do instrukcji warunkowych if..else oraz pętli for.
 
