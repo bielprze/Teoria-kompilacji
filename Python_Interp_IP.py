@@ -5,7 +5,7 @@ import inspect
 import sys
 import collections as c
 
-Block = c.namedtuple("Block", "type, handler, stack_height")
+Block = c.namedtuple("Block", "type, handler, level")
 
 #pojedyncza ramka danych
 class Frame(object):
