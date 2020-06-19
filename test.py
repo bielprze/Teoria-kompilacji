@@ -1,14 +1,3 @@
-def check_cond():
-    x=12
-    y=12
-    
-    if x>y:
-        print("x>y")
-    elif x<y:
-        print("x<y")
-    else:
-        print("x==y")
-    
 def for_loop():
     for i in range(7):
         print(i)
@@ -19,6 +8,9 @@ def while_loop():
         print(i)
         i = i+1
     
+    
+warunki = compile('def conditions(x,y):\n    if x>y:\n        print("x>y")\n    elif x<y:\n        print("x<y")\n    else:\n        print("x==y")\nconditions(5,7)', 'test.py', 'exec')    
+  
 dodawanie = compile("print(5+10)", "test.py", "exec")
 
 odejmowanie = compile("print(27-13)", "test.py", "exec")
