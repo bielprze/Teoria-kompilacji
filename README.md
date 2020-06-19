@@ -89,10 +89,10 @@ def foo():
 code_obj = foo.__code__
 ```
 Tak skompilowany kod należy następnie zaaplikować do wirtualnej maszyny:
-`
+```
 vm.run_code(code_obj)
-`
-Efekt wywołania powinien się pokrywać z wywołaniem wbudowanej funkcji Pythona `exec(code_obj)`
+```
+Efekt wywołania powinien się pokrywać z wywołaniem wbudowanej funkcji Pythona `exec(code_obj)`.
 
 Dodatkowo przydaje się funkcja `dis.dis(func_name)`, która przedstawia kod maszynowy (*bytecod*) w formie czytelnej dla ludzi.
 
