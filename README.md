@@ -2,7 +2,6 @@
 ## Interpreter pythona w pythonie
 
 
-
 Interpreter pythona można rozuemić jako:
   - REPL (Read-Evaluate-Print-Loop) - czyli interaktywne środowisko programowania, wiersz poleceń powłoki
   - program wykonujący od parsowania przez kompilację po interpretację programy napisane w Pythonie
@@ -17,6 +16,7 @@ Zalety:
 
 Wady:
 - szybkość (oryginalny interpreter napisany w C jest bardzo dobrze zoptymalizowany)
+- nie zawiera wszystkich funkcjonalności oryginalnego interpretera
 
 ### Zasada działania interpretera 
 
@@ -52,7 +52,6 @@ W szczególności, do wprowadzenia zmiennych, w obiekcie wejściowym potrzebna j
 
 #### Wyrażenia warunkowe i pętle
 Do ewaluowania wyrażeń warunkowych i wykonywania pętli potrzebne są instrukcje skoków (warunkowych i bezwarunkowych) oraz operatory porównywania posiadające swoje implementacje funkcji operujących na stosie. Instrukcje skoków jako argument przyjmują indeks instrukcji do której ma ''skoczyć'' interpreter, tzw. *jump target*.
-TODO fill
 
 ### Frames
 Ramka jest pewnym kontekstem, zbiorem informacji dla fragmentu kodu, zawierającym własny stos danych. Każdemu wywołaniu funkcji, każdej definicji klasy i każdemu modułowi towarzyszy jedna tworzona w locie ramka, więc z każdą ramką powiązany jest jeden *code object*, ale jeden *code object* może zawierać wiele ramek. Ramki żyją na stosie wywołań (*call stack*), a po powrocie z funkcji są niszczone (zdejmowane ze stosu). 
@@ -60,7 +59,6 @@ Szczególnym przypadkiem jest instrukcja zwracająca, która powoduje przekazani
 1. Zdjęcie ze stosu danych (*data stack*) wartości odpowiadającej ramce będącej na szczycie stosu wywołań
 2. Zdjęcie tej ramki ze stosu wywołań
 3. Dodanie wcześniej zdjętej wartości na stos danych kolejnej ramki
-
 
 ### Implementacja
 
@@ -71,20 +69,30 @@ W pierwszej części implementacji stworzyliśmy szkielet systemu składający s
   - Function - sterowanie tworzeniem nowych ramek (przy wywoływaniu funkcji). Zamiast normalnych funkcji Pythona
   
 #### Implementacja cz.2
-W drugiej części przygotowany wcześniej szkielet programu został wypełniony. Dodatkowo zostały zaimplementowane podstawowe instrukcje (dodawanie, odejmowanie, mnożenie, dzielenie, pobieranie zmiennych, stałych itp.). W aktualnej wersji interpreter jest w stanie przyjąć wcześniej skompilowany kod i przeprowadzić na nim swoje operacje. 
-
-TODO
--możliwości kompilacji - compile i obj.__code__
--python 3.5
--The bytecodes that manipulate the stack always operate on the current frame's data stack
-
-Struktura *prawdziwego bytecodu* w zasadzie nie różni sie od przedstawionej, z dokładnością do używania jednego bajta pamięci zamiast długich nazw opisowych. Python udostępnia wiele swoich elementów podczas działania programu takich jak:
- - func_name.\_\_code__ - *code object* powiązany z funkcją
- - func_name.\_\_code__.co_code - *bytecode*
- - getattr(self, instruction) - w celu dynamicznego sprawdzania nazw kolejnych metod żeby uniknąć potwornego ifa 
- - dis.dis(func_name) - przedstawia kod maszynowy (tu *bytecod*) w formie czytelnej dla ludzi
- 
+W drugiej części przygotowany wcześniej szkielet programu został wypełniony. Dodatkowo zostały zaimplementowane podstawowe instrukcje (dodawanie, odejmowanie, mnożenie, dzielenie, pobieranie zmiennych, stałych itp.). W aktualnej wersji interpreter jest w stanie przyjąć wcześniej skompilowany kod i przeprowadzić na nim swoje operacje.  
  
 #### Implementacja cz.3
 W trzeciej części implementacji dodaliśmy obsługę kolejnych instrukcji, tak że w finalnym projekcie mamy dostep do podstawowcyh operacji matematycznych (mnożenie, dzielenie, modulo, dodawanie, odejmowanie), operatorów logicznych (OR i AND), operatorów porównania (większe od, większe bądź równe, równe, nierówne, mniejsze, mniejsze bądź równe), do instrukcji warunkowych if..else oraz pętli for.
 
+### Instrukcja użycia
+Na początku należy stworzyć obiekt interpretera: 
+```
+vm = VirtualMachine()
+```
+Program przyjmuje kod skompilowany, należy więc doprowadzić go do takiej postaci. Są na to dwa sposoby:
+- użycie wbudowanej funkcji `compile` (np. `code_obj = compile('print("Hello World")', "filename", "exec")`)
+- w przypadku funkcji użycie atrybutu \_\_code__ 
+```
+def foo():
+    print("HelloWorld")
+code_obj = foo.__code__
+```
+Tak skompilowany kod należy następnie zaaplikować do wirtualnej maszyny:
+`
+vm.run_code(code_obj)
+`
+Efekt wywołania powinien się pokrywać z wywołaniem wbudowanej funkcji Pythona
+`exec(code_obj)`
+Dodatkowy przydaje się funkcja dis.dis(func_name),która przedstawia kod maszynowy (*bytecod*) w formie czytelnej dla ludzi.
+
+Testowane z Pythonem 3.5.9.
