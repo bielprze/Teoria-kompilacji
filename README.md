@@ -80,7 +80,8 @@ Na początku należy stworzyć obiekt interpretera:
 vm = VirtualMachine()
 ```
 Program przyjmuje kod skompilowany, należy więc doprowadzić go do takiej postaci. Są na to dwa sposoby:
-- użycie wbudowanej funkcji `compile` (np. `code_obj = compile('print("Hello World")', "filename", "exec")`)
+- użycie wbudowanej funkcji `compile`, np. 
+`code_obj = compile('print("Hello World")', "filename", "exec")`)
 - w przypadku funkcji użycie atrybutu \_\_code__ 
 ```
 def foo():
@@ -91,8 +92,8 @@ Tak skompilowany kod należy następnie zaaplikować do wirtualnej maszyny:
 `
 vm.run_code(code_obj)
 `
-Efekt wywołania powinien się pokrywać z wywołaniem wbudowanej funkcji Pythona
-`exec(code_obj)`
-Dodatkowy przydaje się funkcja dis.dis(func_name),która przedstawia kod maszynowy (*bytecod*) w formie czytelnej dla ludzi.
+Efekt wywołania powinien się pokrywać z wywołaniem wbudowanej funkcji Pythona `exec(code_obj)`
+
+Dodatkowo przydaje się funkcja `dis.dis(func_name)`, która przedstawia kod maszynowy (*bytecod*) w formie czytelnej dla ludzi.
 
 Testowane z Pythonem 3.5.9.
