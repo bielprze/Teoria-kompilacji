@@ -97,3 +97,21 @@ Efekt wywołania powinien się pokrywać z wywołaniem wbudowanej funkcji Python
 Dodatkowo przydaje się funkcja `dis.dis(func_name)`, która przedstawia kod maszynowy (*bytecod*) w formie czytelnej dla ludzi.
 
 Testowane z Pythonem 3.5.9.
+
+### Podział pracy
+- implementacja
+    - P.B. - 65%
+    - I.P. - 35%
+- dokumenracja
+    - P.B. - 20%
+    - I.P. - 80%
+- prezentacja i demo
+    - P.B. - 50%
+    - I.P. - 50%
+
+### Żródła
+
+- https://opensource.com/article/18/4/introduction-python-bytecode
+- https://www.quora.com/What-is-a-code-object-in-Python
+- https://www.aosabook.org/en/500L/a-python-interpreter-written-in-python.html
+- https://docs.python.org/3.5/
